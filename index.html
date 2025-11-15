@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GloryMed - Health Literacy Translator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">G</div>
+            <h1>GloryMed<span class="logo-subtitle">Health Literacy Translator</span></h1>
+        </div>
+        <div class="header-right">
+            <button class="start-btn" onclick="openFeedbackModal()">Feedback</button>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-navigation">
+        <button class="nav-tab active" onclick="switchMainTab('translation', event)">
+            <span class="icon">🔍</span>
+            <div>
+                <div>Translate medical terms</div>
+                <span class="subtitle">Plain English explanations</span>
+            </div>
+        </button>
+        <button class="nav-tab" onclick="switchMainTab('questions', event)">
+            <span class="icon">💬</span>
+            <div>
+                <div>Questions for doctor</div>
+                <span class="subtitle">Prepare for appointments</span>
+            </div>
+        </button>
+    </nav>
+
+    <!-- Translation Page -->
+    <div id="translation-page" class="page-content active">
+        <div class="translation-page">
+            <!-- Feature Cards -->
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="icon">📋</span>
+                    <h3>Medical Reports</h3>
+                    <p>Lab results, doctor's notes, discharge summaries</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">💊</span>
+                    <h3>Medications</h3>
+                    <p>Prescriptions, side effects, dosage info</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">🩺</span>
+                    <h3>Diagnoses</h3>
+                    <p>Medical conditions explained simply</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">❓</span>
+                    <h3>Ask Questions</h3>
+                    <p>Prepare for doctor appointments</p>
+                </div>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="language-bar">
+                <div class="lang-selector">
+                    <span>Medical Terms</span>
+                </div>
+                <div class="swap-icon">⇄</div>
+                <div class="lang-selector">
+                    <span>Plain English</span>
+                </div>
+            </div>
+
+            <!-- Translator -->
+            <div class="translator-container">
+                <div class="translator-body">
+                    <!-- Input Panel -->
+                    <div class="input-panel">
+                        <textarea 
+                            id="medical-input" 
+                            placeholder="Type to translate.
+
+Example: Patient presents with hypertension and hyperglycemia. CBC shows elevated WBC count. Prescribed metformin 500mg BID.
+
+You can paste entire paragraphs from medical reports, and we'll translate all the medical terms for you!"
+                            oninput="handleInputChange()"
+                        ></textarea>
+                        <div class="panel-footer">
+                            <div class="example-chips">
+                                <span class="chip" onclick="fillExample('hypertension')">Hypertension</span>
+                                <span class="chip" onclick="fillExample('Patient has hypertension and type 2 diabetes mellitus')">Full Sentence</span>
+                                <span class="chip" onclick="fillExample('Patient presents with hypertension and hyperglycemia. CBC shows elevated WBC count. Prescribed metformin 500mg BID.')">Full Report</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Panel -->
+                    <div class="output-panel">
+                        <div id="results-container" class="results-display">
+                            <div class="empty-state">
+                                <div class="icon">📝</div>
+                                <p>Translation will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Pro Tip:</strong>
+                <p>You can paste entire sections from doctor's notes, lab reports, or discharge papers. We'll identify the medical terms and break them down into plain English for you!</p>
+            </div>
+
+            <!-- Add Word to Word Bank Section -->
+            <div class="card" style="margin-top: 30px;">
+                <h2><span class="icon">📚</span>Add to Word Bank</h2>
+                <p style="color: #666; margin-bottom: 20px; font-size: 1em;">Can't find a medical term? Add it yourself and it will be available for translation immediately!</p>
+                
+                <div class="input-section">
+                    <label for="new-term">Medical Term:</label>
+                    <input 
+                        type="text" 
+                        id="new-term" 
+                        placeholder="e.g., tachycardia"
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; margin-bottom: 15px;"
+                    >
+                    
+                    <label for="new-term-definition">Plain English Definition:</label>
+                    <input 
+                        type="text" 
+                        id="new-term-definition" 
+                        placeholder="e.g., Fast heart rate"
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; margin-bottom: 15px;"
+                    >
+                    
+                    <label for="new-term-explanation">Detailed Explanation (Optional):</label>
+                    <textarea 
+                        id="new-term-explanation" 
+                        placeholder="e.g., When your heart beats faster than 100 beats per minute while resting..."
+                        style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; min-height: 80px; margin-bottom: 15px;"
+                    ></textarea>
+                    
+                    <button onclick="submitNewTerm()" style="background: linear-gradient(135deg, #EBAAC6 0%, #829F71 100%); color: white; border: none; padding: 12px 30px; font-size: 1em; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%;">
+                        Add to Word Bank
+                    </button>
+                    
+                    <div id="submit-success" class="tip-box" style="margin-top: 15px; display: none; background: #d4edda; border-left-color: #28a745;">
+                        <strong>✅ Permanently Added!</strong>
+                        <p>This term is now in your personal word bank and will be available every time you use GloryMed. Try translating it above!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Page -->
+    <div id="questions-page" class="page-content">
+        <div class="questions-page">
+            <div class="questions-card">
+                <h2><span class="icon">💬</span>Prepare Questions for Your Doctor</h2>
+                <p class="subtitle">Build a list of questions to bring to your next appointment</p>
+
+                <div class="question-input-container">
+                    <label for="question-input">What do you want to ask your doctor?</label>
+                    <input 
+                        type="text" 
+                        id="question-input" 
+                        class="question-input"
+                        placeholder="e.g., What are the side effects of this medication?"
+                        onkeypress="if(event.key === 'Enter') addQuestion()"
+                    >
+                    <button class="add-question-btn" onclick="addQuestion()">Add Question</button>
+                </div>
+
+                <div class="question-list">
+                    <h3>
+                        <span>My Questions (<span id="question-count">0</span>)</span>
+                        <button id="export-btn" class="export-btn hidden" onclick="exportQuestions()">📄 Export List</button>
+                    </h3>
+                    <div id="questions-list">
+                        <div class="empty-state">
+                            <div class="icon">📝</div>
+                            <p>No questions added yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggested-questions">
+                    <h4>💡 Good Questions to Ask Your Doctor:</h4>
+                    <ul>
+                        <li>What caused this condition?</li>
+                        <li>What are my treatment options?</li>
+                        <li>What are the risks and benefits of each option?</li>
+                        <li>How will this affect my daily life?</li>
+                        <li>When should I expect to feel better?</li>
+                        <li>Are there any lifestyle changes I should make?</li>
+                        <li>What warning signs should I watch for?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay" onclick="closeFeedbackModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="close-modal" onclick="closeFeedbackModal()">&times;</button>
+            <h2>📝 Feedback</h2>
+            <p class="subtitle">Help us improve GloryMed</p>
+            
+            <form class="feedback-form" onsubmit="submitFeedback(event)">
+                <label for="feedback-name">Your Name (Optional)</label>
+                <input 
+                    type="text" 
+                    id="feedback-name" 
+                    placeholder="John Doe"
+                >
+
+                <label for="feedback-email">Your Email (Optional)</label>
+                <input 
+                    type="email" 
+                    id="feedback-email" 
+                    placeholder="john@example.com"
+                >
+
+                <label for="feedback-message">Your Feedback *</label>
+                <textarea 
+                    id="feedback-message" 
+                    placeholder="Tell us what you think, what features you'd like to see, or any issues you've encountered..."
+                    required
+                ></textarea>
+
+                <button type="submit" class="submit-feedback-btn">Submit Feedback</button>
+            </form>
+
+            <div id="feedback-success" class="feedback-success">
+                <strong>✅ Thank you for your feedback!</strong><br>
+                We appreciate your input and will use it to improve GloryMed.
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
